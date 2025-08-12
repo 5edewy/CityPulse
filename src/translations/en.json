@@ -1,5 +1,78 @@
 {
   "welcome_back": "Welcome Back",
   "select_language": "Select Language",
-  "login": "Login"
+  "login": "Login",
+  "auth": {
+    "sign_in_subtitle": "Sign in to City Pulse",
+    "email_label": "Email",
+    "password_label": "Password",
+    "email_placeholder": "your@email.com",
+    "password_placeholder": "••••••••",
+    "no_account": "Don’t have an account?",
+    "signup": "Sign up",
+    "email_password_required": "Email & Password are required",
+    "create_account_title": "Create account",
+    "join_subtitle": "Join City Pulse in seconds",
+    "name_label": "Name",
+    "name_placeholder": "Your name",
+    "create": "Create account",
+    "already_have_account": "Already have an account?",
+    "all_fields_required": "All fields are required",
+    "logout": "Log out"
+  },
+  "home": {
+    "title": "Discover Events",
+    "keyword_label": "Keyword",
+    "keyword_placeholder": "music, sports, comedy…",
+    "city_label": "City",
+    "city_placeholder": "New York, Dubai, London…",
+    "search": "Search",
+    "clear": "Clear",
+    "results_count": "Showing {{count}} result(s)",
+    "empty_state": "No results",
+    "collapse_search": "Hide search",
+    "expand_search": "Show search",
+    "page_of": "Page {{page}} of {{total}}",
+    "view_details": "View details",
+    "loading": "Loading…",
+    "subtitle": "Find local events by keyword & city"
+  },
+  "event": {
+    "not_found": "Not found",
+    "open_ticketmaster": "Open in Ticketmaster",
+    "open_in_maps": "Open in Maps",
+    "back": "Back",
+    "price_range": "{{min}} - {{max}} {{currency}}",
+    "categories": "Categories",
+    "share_message": "{{name}}{{url, optionalUrl}}",
+    "coordinates": "{{lat}}, {{lng}}"
+  },
+  "profile": {
+    "title": "Profile",
+    "hello_name": "Hello, {{name}}",
+    "email": "Email",
+    "language": "Language",
+    "english": "English",
+    "arabic": "Arabic",
+    "logout": "Log out"
+  },
+  "favorites": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites",
+    "added_toast": "Added to favorites",
+    "removed_toast": "Removed from favorites",
+    "empty": "No favorites yet"
+  },
+  "language": {
+    "select_language": "Select Language",
+    "switch_success": "Language updated. Restarting…",
+    "restart_hint": "The app will restart to apply changes."
+  },
+  "common": {
+    "unknown_error": "Unknown error",
+    "required": "Required",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "retry": "Retry"
+  }
 }

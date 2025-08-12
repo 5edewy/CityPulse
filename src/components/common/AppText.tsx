@@ -1,6 +1,7 @@
 import {StyleProp, StyleSheet, Text, TextProps, TextStyle} from 'react-native';
 import React, {memo} from 'react';
-import {colors} from '../../config/theme';
+import {colors, isIOS} from '../../config/theme';
+import {CurrentLanguage} from '../../translations';
 
 interface Props extends TextProps {
   children?: any;
@@ -22,5 +23,6 @@ export const AppText = memo(({children, style, ...restProps}: Props) => {
 const styles = StyleSheet.create({
   text: {
     color: colors.black,
+    textAlign: CurrentLanguage() === 'ar' && isIOS ? 'right' : undefined,
   },
 });

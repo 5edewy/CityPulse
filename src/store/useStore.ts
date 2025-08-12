@@ -17,8 +17,8 @@ export const useStore = createWithEqualityFn<UseStoreHookTypes>()(
       name: 'app-storage',
       storage: createJSONStorage(() => zustandStorage),
       partialize: state => {
-        const {user, token} = state;
-        return {user, token};
+        const {user, token, favorites} = state;
+        return {user, token, favorites};
       },
     },
   ),

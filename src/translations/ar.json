@@ -1,5 +1,78 @@
 {
-  "welcome_back": "مرحبا بك",
-  "select_language": "اختيار اللغه",
-  "login": "تسجيل الدخول"
+  "welcome_back": "مرحبًا بعودتك",
+  "select_language": "اختيار اللغة",
+  "login": "تسجيل الدخول",
+  "auth": {
+    "sign_in_subtitle": "سجّل الدخول إلى City Pulse",
+    "email_label": "البريد الإلكتروني",
+    "password_label": "كلمة المرور",
+    "email_placeholder": "name@example.com",
+    "password_placeholder": "••••••••",
+    "no_account": "ليس لديك حساب؟",
+    "signup": "إنشاء حساب",
+    "email_password_required": "البريد الإلكتروني وكلمة المرور مطلوبان",
+    "create_account_title": "إنشاء حساب",
+    "join_subtitle": "انضم إلى City Pulse خلال ثوانٍ",
+    "name_label": "الاسم",
+    "name_placeholder": "اسمك",
+    "create": "إنشاء حساب",
+    "already_have_account": "لديك حساب بالفعل؟",
+    "all_fields_required": "جميع الحقول مطلوبة",
+    "logout": "تسجيل الخروج"
+  },
+  "home": {
+    "title": "اكتشف الفعاليات",
+    "keyword_label": "الكلمة المفتاحية",
+    "keyword_placeholder": "موسيقى، رياضة، كوميدي…",
+    "city_label": "المدينة",
+    "city_placeholder": "نيويورك، دبي، لندن…",
+    "search": "بحث",
+    "clear": "مسح",
+    "results_count": "عرض {{count}} نتيجة",
+    "empty_state": "لا توجد نتائج",
+    "collapse_search": "إخفاء البحث",
+    "expand_search": "إظهار البحث",
+    "page_of": "الصفحة {{page}} من {{total}}",
+    "view_details": "عرض التفاصيل",
+    "loading": "جاري التحميل…",
+    "subtitle": "اعثر على الفعاليات المحلية عبر الكلمة والمدينة"
+  },
+  "event": {
+    "not_found": "غير موجود",
+    "open_ticketmaster": "افتح في Ticketmaster",
+    "open_in_maps": "افتح في الخرائط",
+    "back": "رجوع",
+    "price_range": "{{min}} - {{max}} {{currency}}",
+    "categories": "التصنيفات",
+    "share_message": "{{name}}{{url, optionalUrl}}",
+    "coordinates": "{{lat}}, {{lng}}"
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "hello_name": "مرحبًا، {{name}}",
+    "email": "البريد الإلكتروني",
+    "language": "اللغة",
+    "english": "الإنجليزية",
+    "arabic": "العربية",
+    "logout": "تسجيل الخروج"
+  },
+  "favorites": {
+    "add": "أضِف إلى المفضلة",
+    "remove": "إزالة من المفضلة",
+    "added_toast": "تمت الإضافة إلى المفضلة",
+    "removed_toast": "تمت الإزالة من المفضلة",
+    "empty": "لا توجد عناصر مفضلة بعد"
+  },
+  "language": {
+    "select_language": "اختيار اللغة",
+    "switch_success": "تم تحديث اللغة. سيتم إعادة التشغيل…",
+    "restart_hint": "سيُعاد تشغيل التطبيق لتطبيق التغييرات."
+  },
+  "common": {
+    "unknown_error": "خطأ غير معروف",
+    "required": "مطلوب",
+    "ok": "حسنًا",
+    "cancel": "إلغاء",
+    "retry": "إعادة المحاولة"
+  }
 }

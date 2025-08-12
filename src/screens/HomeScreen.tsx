@@ -1,4 +1,3 @@
-// src/screens/HomeScreen.tsx
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
@@ -7,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  I18nManager,
 } from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import screenNames from '../navigation/screenNames';
@@ -16,23 +16,23 @@ import {AppText} from '../components/common/AppText';
 import {AppTextInput} from '../components/common/AppTextInput';
 import {VectorIcon} from '../components/common/VectorIcon';
 import {colors, scale, normalizeFontSize} from '../config/theme';
+import {useTranslation} from 'react-i18next';
+import {AppButton} from '../components/common';
 
 type Props = {navigation: NavigationProp<any>};
 
 const PAGE_SIZE = 20;
 
 export const HomeScreen = ({navigation}: Props) => {
+  const {t} = useTranslation();
   const listRef = useRef<FlatList>(null);
 
-  // local inputs
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
 
-  // committed values for fetching
   const [qKeyword, setQKeyword] = useState('');
   const [qCity, setQCity] = useState('');
 
-  // search panel visibility
   const [showSearch, setShowSearch] = useState(true);
 
   const {
@@ -45,9 +45,6 @@ export const HomeScreen = ({navigation}: Props) => {
     refetch,
   } = useSearchEventsInfinite(qKeyword, qCity, PAGE_SIZE);
 
-  // flatten events + unique keys (avoid duplicate keys)
-  console.log('data', data);
-
   const {items, totalPages, currentPage, totalElements} = useMemo(() => {
     const pages = data?.pages ?? [];
     const flat = pages.flatMap((p, idx) => {
@@ -55,7 +52,7 @@ export const HomeScreen = ({navigation}: Props) => {
       const evs = p?._embedded?.events ?? [];
       return evs.map((e: any) => ({
         ...e,
-        __k: `${e?.id || 'NA'}-${pageNum}`, // unique per page
+        __k: `${e?.id || 'NA'}-${pageNum}`,
       }));
     });
     const last = pages[pages.length - 1];
@@ -67,7 +64,6 @@ export const HomeScreen = ({navigation}: Props) => {
     };
   }, [data]);
 
-  // auto-hide search when results appear; keep it if no results
   useEffect(() => {
     if ((qKeyword || qCity) && items.length > 0) {
       setShowSearch(false);
@@ -77,78 +73,92 @@ export const HomeScreen = ({navigation}: Props) => {
   const onSearch = () => {
     setQKeyword(keyword.trim());
     setQCity(city.trim());
-    // if user hits search and there are previous results, collapse now
     if (items.length > 0) setShowSearch(false);
     refetch();
-    // scroll to top for fresh context
     requestAnimationFrame(() =>
       listRef.current?.scrollToOffset({offset: 0, animated: true}),
     );
   };
 
-  const renderItem = ({item}: any) => (
-    <TouchableOpacity
-      style={styles.card}
-      activeOpacity={0.85}
-      onPress={() =>
-        navigation.navigate(screenNames.EVENT_DETAILS, {id: item.id})
-      }>
-      {item?.images?.[0]?.url ? (
-        <Image source={{uri: item.images[0].url}} style={styles.thumb} />
-      ) : (
-        <View style={[styles.thumb, styles.thumbPlaceholder]} />
-      )}
-
-      <View style={styles.cardBody}>
-        <AppText numberOfLines={1} style={styles.cardTitle}>
-          {item?.name}
-        </AppText>
-        <AppText numberOfLines={1} style={styles.cardSub}>
-          {item?._embedded?.venues?.[0]?.city?.name}
-          {item?._embedded?.venues?.[0]?.name
-            ? ` • ${item._embedded.venues[0].name}`
-            : ''}
-        </AppText>
-        {!!item?.dates?.start?.dateTime && (
-          <AppText numberOfLines={1} style={styles.cardMeta}>
-            {item.dates.start.dateTime}
-          </AppText>
+  const renderItem = ({item}: any) => {
+    const dateTime = item?.dates?.start?.dateTime;
+    const formattedDate = new Date(dateTime).toLocaleString();
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.85}
+        onPress={() =>
+          navigation.navigate(screenNames.EVENT_DETAILS, {id: item.id})
+        }>
+        {item?.images?.[0]?.url ? (
+          <Image source={{uri: item.images[0].url}} style={styles.thumb} />
+        ) : (
+          <View style={[styles.thumb, styles.thumbPlaceholder]} />
         )}
-      </View>
 
-      <VectorIcon
-        type="Ionicons"
-        name="chevron-forward"
-        size={scale(18)}
-        color={colors.approxNobalGray}
-      />
-    </TouchableOpacity>
-  );
+        <View style={styles.cardBody}>
+          <AppText numberOfLines={1} style={styles.cardTitle}>
+            {item?.name}
+          </AppText>
+          <AppText numberOfLines={1} style={styles.cardSub}>
+            {item?._embedded?.venues?.[0]?.city?.name}
+            {item?._embedded?.venues?.[0]?.name
+              ? ` • ${item._embedded.venues[0].name}`
+              : ''}
+          </AppText>
+          {!!dateTime && (
+            <AppText numberOfLines={1} style={styles.cardMeta}>
+              {formattedDate}
+            </AppText>
+          )}
+        </View>
 
+        <VectorIcon
+          type="Ionicons"
+          name={I18nManager.isRTL ? 'chevron-back' : 'chevron-forward'}
+          size={scale(18)}
+          color={colors.approxNobalGray}
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.root}>
-      {/* Search card — shown if toggled on, or if no results yet */}
+      <View style={styles.profileIcon}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(screenNames.PROFILE)}
+          style={styles.profileBtn}
+          accessibilityLabel={t('profile.title')}>
+          <VectorIcon
+            type="Ionicons"
+            name="person-circle-outline"
+            size={scale(20)}
+            color={colors.white}
+          />
+        </TouchableOpacity>
+      </View>
+
       {(showSearch || items.length === 0) && (
         <View style={styles.searchCard}>
-          <AppText style={styles.title}>City Pulse</AppText>
-          <AppText style={styles.subtitle}>
-            Find local events by keyword & city
-          </AppText>
+          <AppText style={styles.title}>{t('home.title')}</AppText>
+          <AppText style={styles.subtitle}>{t('home.subtitle')}</AppText>
 
-          <AppText style={styles.label}>Keyword</AppText>
+          <AppText style={styles.label}>{t('home.keyword_label')}</AppText>
           <AppTextInput
-            placeholder="e.g., music, sports, comedy"
+            placeholder={t('home.keyword_placeholder')}
             value={keyword}
             onChangeText={setKeyword}
             autoCapitalize="none"
             autoCorrect={false}
             appearIcon={false}
             returnKeyType="search"
-            onSubmitEditing={onSearch}>
+            onSubmitEditing={onSearch}
+            textInputAccessibilityLabel={t('home.keyword_label')}>
             {keyword?.length ? (
               <TouchableOpacity
                 onPress={() => setKeyword('')}
-                style={{marginRight: scale(6)}}>
+                style={{marginRight: scale(6)}}
+                accessibilityLabel={t('home.clear')}>
                 <VectorIcon
                   type="Ionicons"
                   name="close-circle-outline"
@@ -167,19 +177,21 @@ export const HomeScreen = ({navigation}: Props) => {
             )}
           </AppTextInput>
 
-          <AppText style={styles.label}>City</AppText>
+          <AppText style={styles.label}>{t('home.city_label')}</AppText>
           <AppTextInput
-            placeholder="e.g., Dubai, London, New York"
+            placeholder={t('home.city_placeholder')}
             value={city}
             onChangeText={setCity}
             autoCapitalize="words"
             appearIcon={false}
             returnKeyType="search"
-            onSubmitEditing={onSearch}>
+            onSubmitEditing={onSearch}
+            textInputAccessibilityLabel={t('home.city_label')}>
             {city?.length ? (
               <TouchableOpacity
                 onPress={() => setCity('')}
-                style={{marginRight: scale(6)}}>
+                style={{marginRight: scale(6)}}
+                accessibilityLabel={t('home.clear')}>
                 <VectorIcon
                   type="Ionicons"
                   name="close-circle-outline"
@@ -198,26 +210,27 @@ export const HomeScreen = ({navigation}: Props) => {
             )}
           </AppTextInput>
 
-          <TouchableOpacity style={styles.primaryBtn} onPress={onSearch}>
-            <AppText style={styles.primaryBtnText}>Search</AppText>
-          </TouchableOpacity>
+          <AppButton
+            textBtn={t('home.search')}
+            onPress={onSearch}
+            disabled={!keyword && !city}
+            style={styles.primaryBtn}
+            loading={isLoading}
+          />
         </View>
       )}
 
-      {/* Meta row + "Refine" chip (to reopen search anytime) */}
       <View style={styles.metaRow}>
         <AppText style={styles.metaText}>
           {qKeyword || qCity
-            ? `Showing ${items.length}${
-                totalElements ? ` of ${totalElements}` : ''
-              }`
-            : 'Type a keyword/city to search'}
+            ? t('home.results_count', {count: items.length})
+            : t('home.expand_search')}
         </AppText>
         <View
           style={{flexDirection: 'row', alignItems: 'center', gap: scale(8)}}>
           {totalPages ? (
             <AppText style={styles.metaText}>
-              Page {currentPage} / {totalPages}
+              {t('home.page_of', {page: currentPage, total: totalPages})}
             </AppText>
           ) : null}
           {items.length > 0 && !showSearch && (
@@ -229,20 +242,22 @@ export const HomeScreen = ({navigation}: Props) => {
                 );
               }}
               style={styles.refineChip}
-              activeOpacity={0.9}>
+              activeOpacity={0.9}
+              accessibilityLabel={t('home.expand_search')}>
               <VectorIcon
                 type="Ionicons"
                 name="options-outline"
                 size={scale(14)}
                 color={colors.primary}
               />
-              <AppText style={styles.refineText}>Refine</AppText>
+              <AppText style={styles.refineText}>
+                {t('home.expand_search')}
+              </AppText>
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      {/* Results */}
       <FlatList
         ref={listRef}
         data={items}
@@ -253,25 +268,35 @@ export const HomeScreen = ({navigation}: Props) => {
         onEndReachedThreshold={0.6}
         ListEmptyComponent={
           !isLoading && !isFetching ? (
-            <AppText style={styles.emptyText}>No results</AppText>
+            <AppText style={styles.emptyText}>{t('home.empty_state')}</AppText>
           ) : null
         }
         ListFooterComponent={
           isLoading || isFetching ? (
             <View style={{paddingVertical: scale(10), alignItems: 'center'}}>
-              <ActivityIndicator />
+              <ActivityIndicator color={colors.primary} />
+              <AppText style={{marginTop: scale(6)}}>
+                {t('home.loading')}
+              </AppText>
             </View>
           ) : isFetchingNextPage ? (
             <View style={{paddingVertical: scale(10), alignItems: 'center'}}>
-              <ActivityIndicator />
-              <AppText style={{marginTop: scale(6)}}>Loading more…</AppText>
+              <ActivityIndicator color={colors.primary} />
+              <AppText style={{marginTop: scale(6)}}>
+                {t('home.loading')}
+              </AppText>
             </View>
           ) : hasNextPage ? (
             <TouchableOpacity
               onPress={() => fetchNextPage()}
               style={styles.loadMoreBtn}
-              activeOpacity={0.85}>
-              <AppText style={styles.loadMoreText}>Load more</AppText>
+              activeOpacity={0.85}
+              accessibilityLabel={t('common.more', {
+                defaultValue: 'Load more',
+              })}>
+              <AppText style={styles.loadMoreText}>
+                {t('common.more', {defaultValue: 'Load more'})}
+              </AppText>
               <VectorIcon
                 type="Ionicons"
                 name="chevron-down"
@@ -283,7 +308,6 @@ export const HomeScreen = ({navigation}: Props) => {
         }
       />
 
-      {/* Floating Search FAB (also reopens search) */}
       {items.length > 0 && !showSearch && (
         <TouchableOpacity
           onPress={() => {
@@ -294,7 +318,7 @@ export const HomeScreen = ({navigation}: Props) => {
           }}
           style={styles.fab}
           activeOpacity={0.9}
-          accessibilityLabel="Open search">
+          accessibilityLabel={t('home.expand_search')}>
           <VectorIcon
             type="Ionicons"
             name="search"
@@ -309,6 +333,15 @@ export const HomeScreen = ({navigation}: Props) => {
 
 const styles = StyleSheet.create({
   root: {flex: 1, backgroundColor: colors.mainbgLightBlue},
+
+  profileBtn: {
+    width: scale(36),
+    height: scale(36),
+    borderRadius: scale(18),
+    backgroundColor: colors.blackTrasparent6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   searchCard: {
     backgroundColor: colors.backgroundGray,
@@ -336,7 +369,7 @@ const styles = StyleSheet.create({
     color: colors.sonicSilverGray,
   },
   label: {
-    marginTop: scale(8),
+    marginTop: scale(4),
     marginBottom: scale(6),
     fontSize: normalizeFontSize(11.5),
     color: colors.lightBlack,
@@ -361,6 +394,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: scale(8),
   },
   metaText: {
     color: colors.lightBlack,
@@ -457,5 +491,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: {width: 0, height: 4},
+  },
+  profileIcon: {
+    paddingHorizontal: scale(16),
+    paddingTop: scale(13),
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });

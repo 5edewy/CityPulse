@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    // flex: 1,
   },
   btnText: {
     color: colors.white,

@@ -11,17 +11,20 @@ import {
   HomeScreen,
   SignupScreen,
   EventDetailsScreen,
+  ProfileScreen,
 } from '../screens';
 import {useStore} from '../store';
+import {useTranslation} from 'react-i18next';
 
 type RootStackParamList = {};
 
-const {HOME, LOGIN, SIGNUP, EVENT_DETAILS} = screenNames;
+const {HOME, LOGIN, SIGNUP, EVENT_DETAILS, PROFILE} = screenNames;
 export const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const MainNavigator = memo(() => {
   const user = useStore(s => s.user);
-  console.log('user', user);
+  const {t} = useTranslation();
+
   const stackOptions: NativeStackNavigationOptions = {
     headerBackTitle: '',
     headerTitleAlign: 'center',
@@ -37,25 +40,7 @@ export const MainNavigator = memo(() => {
   };
   return (
     <>
-      {!user ? (
-        <Stack.Navigator screenOptions={stackOptions}>
-          <Stack.Screen
-            name={LOGIN as keyof undefined}
-            component={LoginScreen}
-            options={{
-              title: 'LOGIN',
-            }}
-          />
-
-          <Stack.Screen
-            name={SIGNUP as keyof undefined}
-            component={SignupScreen}
-            options={{
-              title: 'SIGNUP',
-            }}
-          />
-        </Stack.Navigator>
-      ) : (
+      {user ? (
         <Stack.Navigator
           screenOptions={stackOptions}
           initialRouteName={HOME as keyof undefined}>
@@ -72,6 +57,33 @@ export const MainNavigator = memo(() => {
             component={EventDetailsScreen}
             options={{
               headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name={PROFILE as keyof undefined}
+            component={ProfileScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator screenOptions={stackOptions}>
+          <Stack.Screen
+            name={LOGIN as keyof undefined}
+            component={LoginScreen}
+            options={{
+              title: t('login'),
+              headerTransparent: true,
+            }}
+          />
+
+          <Stack.Screen
+            name={SIGNUP as keyof undefined}
+            component={SignupScreen}
+            options={{
+              title: t('auth.signup'),
+              headerTransparent: true,
             }}
           />
         </Stack.Navigator>

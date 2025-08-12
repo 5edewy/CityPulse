@@ -28,7 +28,7 @@
     "react-native-gesture-handler": "2.21.2",
     "react-native-image-pan-zoom": "^2.1.12",
     "react-native-localize": "3.3.0",
-    "react-native-maps": "^1.20.1",
+    "react-native-maps": "^1.25.3",
     "react-native-mmkv": "^3.2.0",
     "react-native-restart": "0.0.27",
     "react-native-safe-area-context": "5.0.0",

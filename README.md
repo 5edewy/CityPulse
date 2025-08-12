@@ -1,79 +1,148 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# City Pulse (React Native)
 
-# Getting Started
+Small RN app showcasing **Ticketmaster search**, **event details + map pin**, **favorites (MMKV/Zustand)**, **mock auth**, and **i18n (EN/AR with RTL toggle + restart)**.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Features
 
-## Step 1: Start the Metro Server
+- Search by **keyword/city** with **infinite scroll**
+- Event details: header image, date/venue/price/categories, **share**, **favorite (heart)**, **open Ticketmaster**, **map pin**
+- **Favorites** persisted in **MMKV** (via Zustand)
+- **Auth (mock)**: login / signup / logout
+- **i18n**: default **English**, toggle **EN/AR** (RTL + restart)
+- **Profile**: user data + language toggle + logout
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+**Stack:** React Native + TypeScript, React Navigation, Axios + React Query, Zustand + MMKV, i18next, react-native-maps, react-native-vector-icons.
 
-To start Metro, run the following command from the _root_ of your React Native project:
+---
 
-```bash
-# using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Start your Application
-
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
+## Setup
 
 ```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+yarn install
+# iOS only
+npx pod-install
+ or cd ios
+  pod install
 ```
 
-### For iOS
+Create **.env** at project root:
+
+```env
+BASE_URL=https://app.ticketmaster.com/discovery/v2
+TM_API_KEY=YOUR_TICKETMASTER_KEY
+```
+
+> Get a free Ticketmaster key from their developer portal and paste it as `TM_API_KEY`.
+
+### Maps
+
+- **iOS:** Apple Maps works by default (no key required).
+- **Android (Google Maps):** add your key inside `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<meta-data
+  android:name="com.google.android.geo.API_KEY"
+  android:value="YOUR_GOOGLE_MAPS_KEY"/>
+```
+
+---
+
+## Run
 
 ```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npx react-native start
+npx react-native run-ios      # or
+npx react-native run-android
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+**Mock login:** `test@demo.com` / `123456` (or sign up any account).
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+---
 
-## Step 3: Modifying your App
+## How to Use
 
-Now that you have successfully run the app, let's modify it.
+- **Search:** enter keyword/city → results → tap a card for details
+- **Favorite:** tap the **heart** on details (saved via MMKV)
+- **Map:** details show a venue pin if lat/lng exist
+- **Language:** Profile → globe toggle (EN/AR). App restarts & flips to RTL in AR
+- **Logout:** Profile → Log out
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+---
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+## Code Map
 
-## Congratulations! :tada:
+- Search (infinite): `src/hooks/useSearchEventsInfinite.ts`
+- Details: `src/screens/EventDetails/EventDetailsScreen.tsx`
+- Map: `src/components/common/EventMap.tsx`
+- Store (MMKV/Zustand): `src/store/*` (`favorites` in state)
+- i18n: `src/translations/*` (`initLang`, `changeLng`, `LanguageIconToggle`)
+- API helper: `src/utils/apiHelpers.ts`
 
-You've successfully run and modified your React Native App. :partying_face:
+---
 
-### Now what?
+## Screenshots
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+> iOS (left) • Android (right)
 
-# Troubleshooting
+### 1- Login
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/1_login_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/1login_android1.png" width="280"/></td>
+  </tr>
+</table>
 
-# Learn More
+### 2- Signup
 
-To learn more about React Native, take a look at the following resources:
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/2_signup_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/2signup_android2.png" width="280"/></td>
+  </tr>
+</table>
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+### 3- Home (empty state)
+
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/3_home_empty_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/3home_empty_android3.png" width="280"/></td>
+  </tr>
+</table>
+
+### 4- Home (results)
+
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/4_home_full_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/4home_android_full4.png" width="280"/></td>
+  </tr>
+</table>
+
+### 5- Event details
+
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/5_details_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/5details_android5.png" width="280"/></td>
+  </tr>
+</table>
+
+### 6- Profile
+
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/6_profile_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/6profile_android6.png" width="280"/></td>
+  </tr>
+</table>
+
+### 7- Arabic / RTL
+
+<table>
+  <tr>
+    <td><img src="docs/screens/ios/7_arabic_ios.png" width="280"/></td>
+    <td><img src="docs/screens/android/7android_arabic.png" width="280"/></td>
+  </tr>
+</table>

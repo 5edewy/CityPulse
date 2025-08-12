@@ -1,8 +1,6 @@
-// src/screens/Auth/LoginScreen.tsx
 import React, {useState} from 'react';
 import {
   View,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -17,32 +15,30 @@ import {AppTextInput} from '../components/common/AppTextInput';
 import {VectorIcon} from '../components/common/VectorIcon';
 import {colors, scale, normalizeFontSize, renderError} from '../config/theme';
 import {AppButton} from '../components/common';
-
-// ⬇️ لو عندك AppButton عالمي، فعِّل السطر ده واستبدل الزر المحلي في آخر الشاشة
-// import {AppButton} from '../components/common/AppButton';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
 
 export const LoginScreen = ({navigation}: Props) => {
+  const {t} = useTranslation();
   const login = useStore(s => s.login);
   const loading = useStore(s => s.loadingAuth);
 
-  const [email, setEmail] = useState('test@demo.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async () => {
     if (!email || !password) {
-      // استخدم ريندر الخطأ بتاعك لو حابب
-      renderError('Email & Password are required');
+      renderError(t('auth.email_password_required'));
       return;
     }
     try {
       await login(email.trim(), password);
     } catch (e: any) {
-      renderError(e?.message || 'Unknown error');
+      renderError(e?.message || t('common.unknown_error'));
       console.warn('Login failed:', e?.message || e);
     }
   };
@@ -52,20 +48,17 @@ export const LoginScreen = ({navigation}: Props) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.root}>
       <View style={styles.card}>
-        {/* Header */}
-        <AppText style={styles.title}>Welcome back 👋</AppText>
-        <AppText style={styles.subtitle}>Sign in to City Pulse</AppText>
-
-        {/* Email */}
-        <AppText style={styles.label}>Email</AppText>
+        <AppText style={styles.title}>{t('welcome_back')} 👋</AppText>
+        <AppText style={styles.subtitle}>{t('auth.sign_in_subtitle')}</AppText>
+        <AppText style={styles.label}>{t('auth.email_label')}</AppText>
         <AppTextInput
-          placeholder="your@email.com"
+          placeholder={t('auth.email_placeholder')}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
-          appearIcon={false} // هنستخدم أيقونة يمين بدل صورة يسار
+          appearIcon={false}
           returnKeyType="next">
           <VectorIcon
             type="Ionicons"
@@ -75,11 +68,9 @@ export const LoginScreen = ({navigation}: Props) => {
             style={{marginRight: scale(6)}}
           />
         </AppTextInput>
-
-        {/* Password */}
-        <AppText style={styles.label}>Password</AppText>
+        <AppText style={styles.label}>{t('auth.password_label')}</AppText>
         <AppTextInput
-          placeholder="••••••••"
+          placeholder={t('auth.password_placeholder')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
@@ -96,18 +87,15 @@ export const LoginScreen = ({navigation}: Props) => {
             />
           </TouchableOpacity>
         </AppTextInput>
-
-        {/* Actions */}
         <View style={{height: scale(8)}} />
-
-        <AppButton textBtn="Login" onPress={onSubmit} loading={loading} />
+        <AppButton textBtn={t('login')} onPress={onSubmit} loading={loading} />
 
         <TouchableOpacity
           style={styles.linkBtn}
           onPress={() => navigation.navigate(screenNames.SIGNUP)}>
           <AppText style={styles.linkText}>
-            Don’t have an account?{' '}
-            <AppText style={styles.linkTextBold}>Sign up</AppText>
+            {t('auth.no_account')}{' '}
+            <AppText style={styles.linkTextBold}>{t('auth.signup')}</AppText>
           </AppText>
         </TouchableOpacity>
       </View>
@@ -151,19 +139,6 @@ const styles = StyleSheet.create({
     fontSize: normalizeFontSize(11.5),
     color: colors.lightBlack,
   },
-  primaryBtn: {
-    height: scale(44),
-    borderRadius: scale(10),
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: scale(6),
-  },
-  primaryBtnText: {
-    color: colors.white,
-    fontSize: normalizeFontSize(13.5),
-    fontWeight: '700',
-  },
   linkBtn: {
     alignSelf: 'center',
     paddingVertical: scale(10),
@@ -175,13 +150,5 @@ const styles = StyleSheet.create({
   linkTextBold: {
     color: colors.primary,
     fontWeight: '700',
-  },
-  loadingBtn: {
-    height: scale(44),
-    borderRadius: scale(10),
-    backgroundColor: colors.grayTransparent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: scale(6),
   },
 });

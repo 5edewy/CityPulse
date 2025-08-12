@@ -8,9 +8,11 @@ import {
   StyleProp,
   ViewStyle,
   Image,
+  I18nManager,
 } from 'react-native';
 
 import {scale, colors, normalizeFontSize} from '../../config/theme';
+import {CurrentLanguage} from '../../translations';
 
 interface Props extends TextInputProps {
   onSubmit?: () => void;
@@ -53,10 +55,8 @@ export const AppTextInput = memo(
 
     ...restInputProps
   }: Props) => {
-    const rowStyle = 'row';
-
     return (
-      <View style={[{marginBottom: scale(15)}, container]}>
+      <View style={[{marginBottom: scale(6)}, container]}>
         <View style={[styles.inputContainer, styleInput]}>
           <View style={styles.rowContainer}>
             {appearIcon && (
@@ -120,7 +120,8 @@ const styles = StyleSheet.create({
     color: '#202020',
     width: 'auto',
     flex: 1,
-    textAlign: 'left',
+    textAlign: CurrentLanguage() === 'ar' ? 'right' : 'left',
+
     fontSize: normalizeFontSize(12.5),
   },
 

@@ -1,8 +1,6 @@
-// src/screens/Auth/SignupScreen.tsx
 import React, {useState} from 'react';
 import {
   View,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
@@ -15,34 +13,33 @@ import screenNames from '../navigation/screenNames';
 import {AppText} from '../components/common/AppText';
 import {AppTextInput} from '../components/common/AppTextInput';
 import {VectorIcon} from '../components/common/VectorIcon';
-import {colors, scale, normalizeFontSize} from '../config/theme';
+import {colors, scale, normalizeFontSize, renderError} from '../config/theme';
 import {AppButton} from '../components/common';
-
-// If you have a global button, use it here:
-// import {AppButton} from '../components/common/AppButton';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   navigation: NavigationProp<any>;
 };
 
 export const SignupScreen = ({navigation}: Props) => {
+  const {t} = useTranslation();
   const signup = useStore(s => s.signup);
   const loading = useStore(s => s.loadingAuth);
 
-  const [name, setName] = useState('User');
-  const [email, setEmail] = useState('new@demo.com');
-  const [password, setPassword] = useState('123456');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async () => {
     if (!name?.trim() || !email?.trim() || !password) {
-      // renderError('All fields required');
+      renderError(t('auth.all_fields_required'));
       return;
     }
     try {
       await signup(name.trim(), email.trim(), password);
-      // optionally: navigation.replace(screenNames.HOME);
     } catch (e: any) {
+      renderError(e?.message || t('common.unknown_error'));
       console.warn('Signup failed:', e?.message || e);
     }
   };
@@ -52,13 +49,12 @@ export const SignupScreen = ({navigation}: Props) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.root}>
       <View style={styles.card}>
-        <AppText style={styles.title}>Create account</AppText>
-        <AppText style={styles.subtitle}>Join City Pulse in seconds</AppText>
+        <AppText style={styles.title}>{t('auth.create_account_title')}</AppText>
+        <AppText style={styles.subtitle}>{t('auth.join_subtitle')}</AppText>
 
-        {/* Name */}
-        <AppText style={styles.label}>Name</AppText>
+        <AppText style={styles.label}>{t('auth.name_label')}</AppText>
         <AppTextInput
-          placeholder="Your name"
+          placeholder={t('auth.name_placeholder')}
           value={name}
           onChangeText={setName}
           autoCapitalize="words"
@@ -73,10 +69,9 @@ export const SignupScreen = ({navigation}: Props) => {
           />
         </AppTextInput>
 
-        {/* Email */}
-        <AppText style={styles.label}>Email</AppText>
+        <AppText style={styles.label}>{t('auth.email_label')}</AppText>
         <AppTextInput
-          placeholder="your@email.com"
+          placeholder={t('auth.email_placeholder')}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -93,10 +88,9 @@ export const SignupScreen = ({navigation}: Props) => {
           />
         </AppTextInput>
 
-        {/* Password */}
-        <AppText style={styles.label}>Password</AppText>
+        <AppText style={styles.label}>{t('auth.password_label')}</AppText>
         <AppTextInput
-          placeholder="••••••••"
+          placeholder={t('auth.password_placeholder')}
           value={password}
           onChangeText={setPassword}
           secureTextEntry={!showPassword}
@@ -115,9 +109,8 @@ export const SignupScreen = ({navigation}: Props) => {
         </AppTextInput>
 
         <View style={{height: scale(8)}} />
-
         <AppButton
-          textBtn="Create account"
+          textBtn={t('auth.create')}
           onPress={onSubmit}
           loading={loading}
         />
@@ -126,8 +119,8 @@ export const SignupScreen = ({navigation}: Props) => {
           style={styles.linkBtn}
           onPress={() => navigation.navigate(screenNames.LOGIN)}>
           <AppText style={styles.linkText}>
-            Already have an account?{' '}
-            <AppText style={styles.linkTextBold}>Log in</AppText>
+            {t('auth.already_have_account')}{' '}
+            <AppText style={styles.linkTextBold}>{t('login')}</AppText>
           </AppText>
         </TouchableOpacity>
       </View>
@@ -171,19 +164,6 @@ const styles = StyleSheet.create({
     fontSize: normalizeFontSize(11.5),
     color: colors.lightBlack,
   },
-  primaryBtn: {
-    height: scale(44),
-    borderRadius: scale(10),
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: scale(6),
-  },
-  primaryBtnText: {
-    color: colors.white,
-    fontSize: normalizeFontSize(13.5),
-    fontWeight: '700',
-  },
   linkBtn: {
     alignSelf: 'center',
     paddingVertical: scale(10),
@@ -195,13 +175,5 @@ const styles = StyleSheet.create({
   linkTextBold: {
     color: colors.primary,
     fontWeight: '700',
-  },
-  loadingBtn: {
-    height: scale(44),
-    borderRadius: scale(10),
-    backgroundColor: colors.grayTransparent,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: scale(6),
   },
 });
